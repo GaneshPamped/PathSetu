@@ -99,6 +99,241 @@ st.sidebar.divider()
 
 st.sidebar.caption("PathSetu • Disaster-Aware Accessibility")
 
+# ---------------------------------------------------------
+# PATHSETU AI ASSISTANT
+# ---------------------------------------------------------
+
+st.sidebar.divider()
+
+st.sidebar.subheader("🤖 PathSetu AI Assistant")
+
+chat_question = st.sidebar.text_input(
+    "Ask PathSetu",
+    placeholder="e.g. Which villages are isolated?"
+)
+
+
+def pathsetu_assistant(question):
+    q = question.lower().strip()
+
+    # -----------------------------------------
+    # Village isolation
+    # -----------------------------------------
+    if "village" in q and (
+        "isolat" in q or
+        "access" in q or
+        "cut off" in q
+    ):
+
+        data = village_data if village_data is not None else isolation
+
+        if data is None:
+            return "Village isolation data is not available."
+
+        priority_col = None
+
+        for col in ["priority", "isolation_level", "risk_level"]:
+            if col in data.columns:
+                priority_col = col
+                break
+
+        if priority_col:
+            high = data[
+                data[priority_col]
+                .astype(str)
+                .str.upper()
+                .isin(["HIGH", "VERY HIGH", "MODERATE"])
+            ]
+
+            if not high.empty:
+                names = []
+
+                for col in ["village", "village_name", "name"]:
+                    if col in high.columns:
+                        names = high[col].astype(str).head(10).tolist()
+                        break
+
+                if names:
+                    return (
+                        "Based on the available PathSetu village dataset, "
+                        "the following villages require attention: "
+                        + ", ".join(names)
+                    )
+
+        return (
+            f"PathSetu currently has {len(data)} village records "
+            "available for accessibility analysis."
+        )
+
+    # -----------------------------------------
+    # Road risk
+    # -----------------------------------------
+    if (
+        "road" in q
+        and ("risk" in q or "danger" in q or "hazard" in q)
+    ):
+
+        if road_data is None:
+            return "Road risk data is not available."
+
+        risk_col = None
+
+        for col in [
+            "risk_score",
+            "risk",
+            "road_risk",
+            "risk_value"
+        ]:
+            if col in road_data.columns:
+                risk_col = col
+                break
+
+        if risk_col:
+
+            values = pd.to_numeric(
+                road_data[risk_col],
+                errors="coerce"
+            ).dropna()
+
+            if not values.empty:
+
+                return (
+                    f"The PathSetu road dataset contains "
+                    f"{len(road_data):,} road records. "
+                    f"The average risk score is "
+                    f"{values.mean():.2f}, while the maximum "
+                    f"recorded score is {values.max():.2f}."
+                )
+
+        return (
+            f"PathSetu contains {len(road_data):,} road records."
+        )
+
+    # -----------------------------------------
+    # Weather
+    # -----------------------------------------
+    if (
+        "weather" in q
+        or "rain" in q
+        or "rainfall" in q
+    ):
+
+        if weather_data is None:
+            return "Weather data is not available."
+
+        return (
+            f"PathSetu has {len(weather_data):,} weather records. "
+            "The dashboard Weather section provides the available "
+            "weather and rainfall information."
+        )
+
+    # -----------------------------------------
+    # Routes
+    # -----------------------------------------
+    if (
+        "route" in q
+        or "routing" in q
+        or "safer" in q
+        or "safe route" in q
+    ):
+
+        if routes is None:
+            return "Risk-aware route data is not available."
+
+        return (
+            f"PathSetu contains {len(routes):,} risk-aware route "
+            "records. These routes consider disaster-related "
+            "road risk rather than distance alone."
+        )
+
+    # -----------------------------------------
+    # Supplies
+    # -----------------------------------------
+    if (
+        "supply" in q
+        or "supplies" in q
+        or "priority" in q
+        or "emergency" in q
+    ):
+
+        if supply is None:
+            return "Supply priority data is not available."
+
+        return (
+            f"PathSetu has {len(supply):,} supply-priority records. "
+            "Open the Supply Priorities section to inspect the "
+            "village-level prioritization."
+        )
+
+    # -----------------------------------------
+    # Disaster simulation
+    # -----------------------------------------
+    if (
+        "disaster" in q
+        or "closure" in q
+        or "closed" in q
+        or "simulation" in q
+        or "what if" in q
+    ):
+
+        if simulation is None:
+            return "Disaster simulation data is not available."
+
+        return (
+            f"The disaster simulator contains {len(simulation):,} "
+            "simulation records. It evaluates how road disruption "
+            "can affect accessibility and villages."
+        )
+
+    # -----------------------------------------
+    # Landslides
+    # -----------------------------------------
+    if (
+        "landslide" in q
+        or "landslides" in q
+    ):
+
+        if landslides is None:
+            return "Landslide data is not available."
+
+        return (
+            f"The PathSetu dataset contains "
+            f"{len(landslides):,} historical landslide records."
+        )
+
+    # -----------------------------------------
+    # Help
+    # -----------------------------------------
+    if (
+        "help" in q
+        or "what can you do" in q
+        or "hello" in q
+        or "hi" == q
+    ):
+
+        return (
+            "I'm the PathSetu AI Assistant. You can ask me about "
+            "road risk, villages, weather, safer routes, emergency "
+            "supplies, landslides, or disaster simulations."
+        )
+
+    # -----------------------------------------
+    # Default response
+    # -----------------------------------------
+
+    return (
+        "I can help with PathSetu road risk, village isolation, "
+        "weather, risk-aware routes, supply priorities, landslides "
+        "and disaster simulations. Try asking something like: "
+        "\"Which roads have high risk?\""
+    )
+
+
+if chat_question:
+
+    answer = pathsetu_assistant(chat_question)
+
+    st.sidebar.success(answer)
 
 # ---------------------------------------------------------
 # HEADER

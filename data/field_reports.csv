@@ -1,0 +1,6 @@
+report_id,reporter_type,location,latitude,longitude,incident_type,severity,severity_score,reporter_trust_score,report_confidence,report_status,description,reported_at,report_valid
+R002,Field Team,Dikchu,27.406,88.607,Landslide,VERY HIGH,100,90,94.0,HIGH CONFIDENCE,Possible landslide affecting road accessibility.,2025-12-31 10:15:00,True
+R005,Field Team,Rumtek,27.285,88.55,Road Blockage,HIGH,75,90,84.0,HIGH CONFIDENCE,Temporary road obstruction reported.,2025-12-31 12:20:00,True
+R001,Community,Samdong,27.391,88.667,Road Blockage,HIGH,75,70,72.0,MEDIUM CONFIDENCE,Road reported as partially blocked.,2025-12-31 09:30:00,True
+R003,Community,Raley,27.36,88.69,Road Damage,MODERATE,50,70,62.0,MEDIUM CONFIDENCE,Road surface reported damaged.,2025-12-31 11:00:00,True
+R004,Community,Makha,27.31,88.62,Waterlogging,MODERATE,50,70,62.0,MEDIUM CONFIDENCE,Water accumulation reported on road.,2025-12-31 11:45:00,True
